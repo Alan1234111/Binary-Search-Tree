@@ -1,12 +1,31 @@
-import {Node} from "./Node.js";
+import { Node } from "./Node.js";
 
 class Tree {
   constructor(array) {
-    const uniqueArr = [...new Set(array.sort((a, b) => a - b))];
-    const root = this.buildTree(uniqueArr, 0, uniqueArr.length - 1);
-    this.insert(root, 10);
-    this.delete(root, 324);
-    console.log(this.find(root, 23));
+    this.uniqueArr = [...new Set(array.sort((a, b) => a - b))];
+    this.root = this.buildTree(this.uniqueArr, 0, this.uniqueArr.length - 1);
+    this.insert(this.root, 10);
+    this.delete(this.root, 324);
+    this.find(this.root, 23);
+    this.levelOrder();
+    this.preorder(this.root);
+    this.inorder(this.root);
+    this.postorder(this.root);
+    this.prettyPrint(this.root);
+    console.log(this.height(this.root, 10));
+  }
+
+  prettyPrint(node, prefix = "", isLeft = true) {
+    if (node === null) {
+      return;
+    }
+    if (node.right !== null) {
+      this.prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
+    }
+    console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.data}`);
+    if (node.left !== null) {
+      this.prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
+    }
   }
 
   buildTree(arr, start, end) {
@@ -117,6 +136,99 @@ class Tree {
     if (found != null) return found;
 
     return this.find(root.right, data);
+  }
+
+  levelOrder(callback) {
+    if (this.root == null) return [];
+
+    const queue = [this.root];
+    const result = [[this.root.data]];
+
+    while (queue.length != 0) {
+      let node = queue.shift();
+      let tempArray = [];
+
+      if (node.left != null) {
+        tempArray.push(node.left.data);
+        queue.push(node.left);
+      }
+      if (node.right != null) {
+        tempArray.push(node.right.data);
+        queue.push(node.right);
+      }
+
+      if (tempArray.length != 0) {
+        callback ? callback(node) : result.push(tempArray);
+      }
+    }
+
+    return result;
+  }
+
+  preorder(root, arr = [this.root.data], callback) {
+    if (root == null) return;
+
+    let result = arr;
+
+    if (root.left != null) {
+      callback ? callback(root.data) : result.push(root.left.data);
+    }
+    this.preorder(root.left, result);
+
+    if (root.right != null) {
+      callback ? callback(root.data) : result.push(root.right.data);
+    }
+    this.preorder(root.right, result);
+
+    return result;
+  }
+
+  inorder(root, arr = [], callback) {
+    if (root == null) return;
+
+    let result = arr;
+
+    this.inorder(root.left, result);
+    callback ? callback(root.data) : result.push(root.data);
+    this.inorder(root.right, result);
+
+    return result;
+  }
+
+  postorder(root, arr = [], callback) {
+    if (root == null) return;
+
+    let result = arr;
+
+    this.postorder(root.left, result);
+    this.postorder(root.right, result);
+    callback ? callback(root.data) : result.push(root.data);
+
+    return result;
+  }
+
+  height(root, data) {
+    if (root == null) return;
+
+    if (root.data == data) return root;
+
+    let left = root.left;
+    let right = root.right;
+
+    if (left != null) {
+      this.height(left, data);
+    }
+
+    if (right != null) {
+      this.height(right, data);
+    }
+
+    console.log(left);
+    console.log(right);
+    // take a value and compare to data
+    // go to left leaf and compare
+    // go to right leaf and compare
+    // take another root anc repeat until is done
   }
 }
 
