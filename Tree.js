@@ -1,21 +1,8 @@
 import {Node} from "./Node.js";
-
-class Tree {
+export default class Tree {
   constructor(array) {
     this.uniqueArr = [...new Set(array.sort((a, b) => a - b))];
     this.root = this.buildTree(this.uniqueArr, 0, this.uniqueArr.length - 1);
-    this.insert(this.root, 10);
-    this.delete(this.root, 324);
-    this.find(this.root, 23);
-    this.levelOrder();
-    this.preorder(this.root);
-    this.inorder(this.root);
-    this.postorder(this.root);
-    this.prettyPrint(this.root);
-    this.height(6345);
-    this.depth(this.root, 10);
-    console.log(this.isBalanced(this.root));
-    console.log(this.rebalance(this.root));
   }
 
   prettyPrint(node, prefix = "", isLeft = true) {
@@ -244,8 +231,8 @@ class Tree {
     return dist;
   }
 
-  isBalanced(root) {
-    return this.#testBalance(root) !== -1;
+  isBalanced() {
+    return this.#testBalance(this.root) !== -1;
   }
 
   #testBalance(node) {
@@ -260,11 +247,11 @@ class Tree {
     else return Math.max(lh, rh) + 1;
   }
 
-  rebalance(root) {
-    const newArray = this.inorder(root);
-    return this.buildTree(newArray, 0, newArray.length - 1);
+  rebalance() {
+    const newArray = this.inorder(this.root);
+    this.root = this.buildTree(newArray, 0, newArray.length - 1);
   }
 }
 
-const arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-const tree = new Tree(arr);
+// const arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
+// const tree = new Tree(arr);
