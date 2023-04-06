@@ -1,4 +1,4 @@
-import { Node } from "./Node.js";
+import {Node} from "./Node.js";
 
 class Tree {
   constructor(array) {
@@ -12,7 +12,10 @@ class Tree {
     this.inorder(this.root);
     this.postorder(this.root);
     this.prettyPrint(this.root);
-    console.log(this.height(this.root, 10));
+    this.height(6345);
+    this.depth(this.root, 10);
+    console.log(this.isBalanced(this.root));
+    console.log(this.rebalance(this.root));
   }
 
   prettyPrint(node, prefix = "", isLeft = true) {
@@ -207,28 +210,59 @@ class Tree {
     return result;
   }
 
-  height(root, data) {
-    if (root == null) return;
+  height(data) {
+    if (this.root == null) return 0;
 
-    if (root.data == data) return root;
+    const queue = [this.root];
+    let count = 1;
+    let isAlreadyFind = false;
 
-    let left = root.left;
-    let right = root.right;
+    while (!isAlreadyFind) {
+      let node = queue.shift();
 
-    if (left != null) {
-      this.height(left, data);
+      if (node.left != null) {
+        count++;
+        queue.push(node.left);
+        if (node.left.data == data) isAlreadyFind = !isAlreadyFind;
+      }
+      if (node.right != null) {
+        count++;
+        queue.push(node.right);
+        if (node.right.data == data) isAlreadyFind = !isAlreadyFind;
+      }
     }
 
-    if (right != null) {
-      this.height(right, data);
-    }
+    return count;
+  }
 
-    console.log(left);
-    console.log(right);
-    // take a value and compare to data
-    // go to left leaf and compare
-    // go to right leaf and compare
-    // take another root anc repeat until is done
+  depth(root, data) {
+    if (root == null) return 0;
+
+    let dist = 0;
+    if (root.data == data || (dist = this.depth(root.left, data)) >= 1 || (dist = this.depth(root.right, data)) >= 1) return dist + 1;
+
+    return dist;
+  }
+
+  isBalanced(root) {
+    return this.#testBalance(root) !== -1;
+  }
+
+  #testBalance(node) {
+    if (node === null) return 0;
+
+    let lh = this.#testBalance(node.left);
+    let rh = this.#testBalance(node.right);
+
+    let diff = Math.abs(lh - rh);
+
+    if (lh === -1 || rh === -1 || diff > 1) return -1;
+    else return Math.max(lh, rh) + 1;
+  }
+
+  rebalance(root) {
+    const newArray = this.inorder(root);
+    return this.buildTree(newArray, 0, newArray.length - 1);
   }
 }
 
